@@ -6,8 +6,8 @@ This reposistory give the detailed solution to the assignment.
 First, create a virtual environment, update pip, and install the required packages:
 
 ```
-$ python3 -m venv ally_env
-$ source ally_env/bin/activate
+$ python3 -m venv ally_env (for windows user you could use 'python' instead of 'python3')
+$ source ally_env/bin/activate ( for windows user im the cmd use: .\ally_env\Scripts\activate.bat)
 $ pip install -U pip
 $ pip install -r requirements.txt
 ```
