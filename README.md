@@ -15,7 +15,8 @@ $ pip install -r requirements.txt
 You need to set up the following environment variables:
 
 First make a free account on livekit and get your own Livekit url, api key and secret.
-The other 3 api keys are in the password protected zip file, the password is in the email sent to you.
+
+Make sure you add the following lines by making a .env file within your project:
 
 ```
 LIVEKIT_URL=...
