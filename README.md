@@ -30,10 +30,10 @@ ELEVEN_API_KEY=
 Then, run the assistant:
 
 ```
-$ python3 assistant.py download-files
-$ python3 assistant.py start
+$ python3 main.py download-files
+$ python3 main.py start
 or
-$ python3 assistant.py dev
+$ python3 main.py dev
 ```
 
 Finally, you can load the [hosted playground](https://agents-playground.livekit.io/) and connect it.
