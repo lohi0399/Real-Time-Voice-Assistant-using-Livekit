@@ -85,7 +85,9 @@ async def select_best_frame(latest_images_deque):
 
     
 async def entrypoint(ctx: JobContext):
-    
+
+#------------------------------------------------------CONNECTING TO THE ROOM---------------------------------------------#
+       
     print(f"Room name: {ctx.room.name}")
     await ctx.connect()
 
@@ -144,7 +146,7 @@ async def entrypoint(ctx: JobContext):
             return
     
         try:
-            user_msg = called_functions[0].call_info.arguments.get("user_msg")  # Now the user_msg varibale has the value that the 
+            user_msg = called_functions[0].call_info.arguments.get("user_msg")  # Now the user_msg variable has the value that the user promped which needed vision capabilites 
             print(f"[LOG] Function call user message: {user_msg}")
             
             if user_msg:
@@ -156,7 +158,7 @@ async def entrypoint(ctx: JobContext):
             print(f"[ERROR] Error in function calls handler: {e}")
             
 #------------------------------------------------------START--------------------------------------------------------#
-    assistant.start(ctx.room)
+    assistant.start(ctx.room) # Assistant starts listening the room
     await asyncio.sleep(1) # Breathing time for the system
     await assistant.say("Hi there! How can I help?", allow_interruptions=True) #Start with a greeting
 #-------------------------------------------------------------------------------------------------------------------#

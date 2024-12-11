@@ -1,7 +1,7 @@
 ### **How the `entrypoint` Function Works**
 
 1. **Initialization Phase (Run Once)**:
-   - When the assistant is launched, the `entrypoint` function is executed.
+   - When the assistant is launched, the `entrypoint` function is executed.The entrypoint function establishes a connection to the RTC room (ctx.connect()) and sets up the assistant to listen to the room. This connection persists as long as the program is running.
    - Within `entrypoint`:
      - The assistant is initialized with components like VAD, STT, GPT, and TTS.
      - The room (`ctx.room`) is connected via `ctx.connect()`.
