@@ -161,6 +161,5 @@ async def entrypoint(ctx: JobContext):
     await assistant.say("Hi there! How can I help?", allow_interruptions=True) #Start with a greeting
 #-------------------------------------------------------------------------------------------------------------------#
 
-
 if __name__ == "__main__":
     cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint))
