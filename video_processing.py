@@ -54,23 +54,16 @@ async def _enableCamera(ctx):
 
 async def _getVideoFrame(ctx, assistant):
     await _enableCamera(ctx)
-    latest_images_deque = []
     try:
         print("[LOG] Waiting for video track...")
         video_track = await get_video_track(ctx.room)
         print(f"[LOG] Got video track: {video_track.sid}")
         async for event in rtc.VideoStream(video_track):
             latest_image = event.frame
-            latest_images_deque.append(latest_image)
             assistant.fnc_ctx.latest_image = latest_image
-
-            if len(latest_images_deque) == 5:
-                best_frame = await select_best_frame(latest_images_deque)
-                return best_frame
+            return latest_image
+        
     except Exception as e:  # Add Exception type
         print(f"[ERROR] Error in getVideoframe function: {e}")
         return None
        
-async def select_best_frame(latest_images_deque):
-    '''Please come up with a function that selects the best frame out of 5'''
-    return latest_images_deque[-1]
