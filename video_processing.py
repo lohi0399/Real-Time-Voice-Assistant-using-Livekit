@@ -1,14 +1,14 @@
 import asyncio
 from livekit import rtc
+import sentry_sdk
 
 
-
-async def get_video_track(room: rtc.Room):  # This function essentially grab the video form the first webcam it detects.
+async def get_video_track(room: rtc.Room):
     """
     Sets up video track handling using LiveKit's subscription model.
     Returns a Future that will be resolved with the first available video track.
     """
-    video_track = asyncio.Future[rtc.RemoteVideoTrack]()  # Jusr creating a variable
+    video_track = asyncio.Future[rtc.RemoteVideoTrack]()
     
     # First check existing tracks in case we missed the subscription event
     for participant in room.remote_participants.values():
@@ -22,7 +22,7 @@ async def get_video_track(room: rtc.Room):  # This function essentially grab the
                 print(f"[LOG] Found existing video track: {pub.track.sid}")
 
                 
-                video_track.set_result(pub.track) # Setting the value of video_track to the located video track
+                video_track.set_result(pub.track)
                 return await video_track
 
     # Set up listener for future video tracks
@@ -43,7 +43,7 @@ async def get_video_track(room: rtc.Room):  # This function essentially grab the
     try:
         return await asyncio.wait_for(video_track, timeout=10.0)
     except asyncio.TimeoutError as e:
-        # sentry_sdk.capture_exception(e)
+        sentry_sdk.capture_exception(e)
         print("[ERROR] Timeout waiting for video track")
         raise Exception("No video track received within timeout period")
         
@@ -59,8 +59,8 @@ async def _getVideoFrame(ctx, assistant):
         print("[LOG] Waiting for video track...")
         video_track = await get_video_track(ctx.room)
         print(f"[LOG] Got video track: {video_track.sid}")
-        async for event in rtc.VideoStream(video_track): # For every event generated from this video stream
-            latest_image = event.frame   # Only frame are recevied..so basically the assistant only captures images and text
+        async for event in rtc.VideoStream(video_track):
+            latest_image = event.frame
             latest_images_deque.append(latest_image)
             assistant.fnc_ctx.latest_image = latest_image
 
@@ -70,8 +70,7 @@ async def _getVideoFrame(ctx, assistant):
     except Exception as e:  # Add Exception type
         print(f"[ERROR] Error in getVideoframe function: {e}")
         return None
-        
+       
 async def select_best_frame(latest_images_deque):
     '''Please come up with a function that selects the best frame out of 5'''
     return latest_images_deque[-1]
-

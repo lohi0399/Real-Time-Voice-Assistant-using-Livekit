@@ -9,6 +9,8 @@ from livekit.agents.llm import (
 from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, openai, silero, elevenlabs
 from assistant import AssistantFunction
+from groq_open import Groq_Open_LLM
+from groq import Groq
 
 load_dotenv() # Loading environement variables
 
@@ -34,9 +36,16 @@ class Initialization:
         return chat_context
 
     def setting_gpt(self) -> openai.LLM:
+
         gpt = openai.LLM(model="gpt-4o")
+
         return gpt
 
+    def setting_open_llm(self) -> Groq_Open_LLM:
+         
+         o_llm = Groq_Open_LLM(Groq(),"llama-3.2-11b-vision-preview")
+         return o_llm
+    
     def setting_tts(self) -> elevenlabs.TTS:
 
             custom_voice = elevenlabs.Voice(
@@ -59,7 +68,7 @@ class Initialization:
          return chat
 
     def setting_voice_assistant(self) -> VoiceAssistant:
-         
+        
         assistant = VoiceAssistant(
             vad=silero.VAD.load(), 
             stt=deepgram.STT(), 

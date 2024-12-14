@@ -16,47 +16,62 @@ load_dotenv() # Loading environement variables
 async def entrypoint(ctx: JobContext):
 
 #------------------------------------------------------CONNECTING TO THE ROOM---------------------------------------------#
-       
+    await ctx.connect()  
     print(f"Room name: {ctx.room.name}")
-    await ctx.connect()
+    
 
 #------------------------------------------------------INITIALIZATIONS---------------------------------------------#
-   
-    chat_context = Initialization.setting_chat_context()
-    gpt = Initialization.setting_gpt()
-    assistant = Initialization.setting_voice_assistant()
-    chat = Initialization.setting_chat_manager()
+    init = Initialization(ctx)
+    
+    chat_context = init.setting_chat_context()
+    gpt = init.setting_gpt()
+    o_llm = init.setting_open_llm()
+    assistant = init.setting_voice_assistant()
+    chat = init.setting_chat_manager()
 
 
 #------------------------------------------------------EVENTS HANDLERS------------------------------------------------------#
     
-    async def _answer(text: str, use_image: bool = False):
+    async def _answer(text: str, use_image: bool = False, open_llm: bool = False):
         """
         Answer the user's message with the given text and optionally the latest
         image captured from the video track.
         """
-        print(f"[LOG] _answer called with text: {text}, use_image: {use_image}")
+        print(f"[LOG] _answer called with text: {text}, use_image: {use_image}, open_llm: {open_llm}")
         try:
-            content: list[str | ChatImage] = [text]  # The variable content bascially is a list which can either contain a string or ChatImage ,and can be given the LLM
+            
             if use_image:
                 print("[LOG] Getting video frame")
+                content: list[str | ChatImage] = [text]
                 latest_image = await _getVideoFrame(ctx, assistant)
+
                 if latest_image is not None:
+
                     print("[LOG] Adding image to content")
                     content.append(ChatImage(image=latest_image))
+
+                    if open_llm:
+
+                        print("[LOG] Getting open LLM response")
+                        response = o_llm.chat(ChatImage(image=latest_image),text)
+                        content: list[str | ChatImage] = ['Repeat this- ' + response]
+
                 else:
                     print("[LOG] No image available")
-    
-            print("[LOG] Adding message to chat context")
-            chat_context.messages.append(ChatMessage(role="user", content=content))
-    
+
+
+            print("[LOG] Adding full message to chat context")
+            chat_context.messages.append(ChatMessage(role="user", content=content))  
             print("[LOG] Getting GPT response")
             stream = gpt.chat(chat_ctx=chat_context)
+
             print("[LOG] Sending response to assistant")
             await assistant.say(stream, allow_interruptions=True)
+
         except Exception as e:
             print(f"[ERROR] Error in _answer: {e}")
-    
+
+
     @chat.on("message_received")
     def on_message_received(msg: rtc.ChatMessage):
         """This event triggers whenever we get a new message from the user."""
@@ -75,12 +90,21 @@ async def entrypoint(ctx: JobContext):
             return
     
         try:
+            person_in_frame_called = any(
+            func.call_info.function_info.name == "person_in_frame"
+            for func in called_functions
+            )
+
             user_msg = called_functions[0].call_info.arguments.get("user_msg")  # Now the user_msg variable has the value that the user promped which needed vision capabilites 
             print(f"[LOG] Function call user message: {user_msg}")
             
             if user_msg:
-                print("[LOG] Creating task for _answer with image")
-                asyncio.create_task(_answer(user_msg, use_image=True))
+                if person_in_frame_called:
+                    print("[LOG] Creating task for _answer with image and person")
+                    asyncio.create_task(_answer(user_msg, use_image=True,open_llm=True))
+                else:
+                    print("[LOG] Creating task for _answer with image")
+                    asyncio.create_task(_answer(user_msg, use_image=True,open_llm=False))
             else:
                 print("[LOG] No user message to process")
         except Exception as e:

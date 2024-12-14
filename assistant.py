@@ -23,3 +23,22 @@ class AssistantFunction(llm.FunctionContext):
         print(f"[LOG] Message triggering vision capabilities: {user_msg}")
 
         return None
+    
+    @llm.ai_callable(
+        description=(
+            "Called when asked to tell anything something about a person or the user himself accurately and in good detail"
+        )
+    )
+
+    async def person_in_frame(
+        self,
+        user_msg: Annotated[
+            str,
+            llm.TypeInfo(
+                description="The user message is requesting details about a person in the frame"
+            ),
+        ],
+    ):
+        print(f"[LOG] Person detection requested: {user_msg}")
+
+        return None
