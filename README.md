@@ -1,41 +1,170 @@
-# Envision-AI-Assignment-Solution-Lohit
-This reposistory give the detailed solution to the assignment.
+# Hybrid Image Query Solution for Ally - Lohit Gandham
 
-# Setup
+## Overview
 
-First, create a virtual environment, update pip, and install the required packages:
+This repository provides a solution to integrate a hybrid image processing system for **Ally**, the real-time personalized assistant for the blind and visually impaired. The system dynamically switches between a proprietary model (e.g., GPT-4o) and an open-source model (**Groq LLaMA 3.2-11B Vision Preview**) based on the presence of a person in the image. The Groq model is used to describe images containing people, circumventing proprietary model guardrails, while maintaining high reliability and low latency.
 
+---
+
+## Features
+
+- **Hybrid Model Handling**:
+  - **Person Detected**: Uses the **Groq LLaMA 3.2-11B Vision Preview** model.
+  - **No Person Detected**: Processes queries with GPT-4o.
+- **Low Latency**: Achieves a time-to-first-token (TTFT) under 500ms for streamed responses.
+- **Scalable Design**: Handles at least 10 image queries (split evenly between people-present and people-absent cases) in one API call without degradation in response times.
+- **User-Friendly Deployment**: Minimal setup required for running the project.
+
+---
+
+## Prerequisites
+
+1. **Python Environment**:
+   - Python 3.8 or higher.
+   - Required dependencies specified in `requirements.txt`.
+
+2. **API Accounts**:
+   - **Groq API**: Create a free account at [Groq Console](https://console.groq.com/login) and obtain your API key.
+   - **LiveKit**: Create a free account at [LiveKit](https://livekit.io/) to get your LiveKit URL, API key, and secret.
+   - **Other API Keys**: These include DeepGram, OpenAI, and Eleven Labs keys. Obtain these from the password-protected zip file provided via email (password also provided in the email).
+
+3. **Hardware**:
+   - Internet access for querying APIs.
+
+---
+
+## Setup
+
+### Environment Setup
+
+1. Create and activate a virtual environment:
+   ```bash
+   python3 -m venv ally_env
+   source ally_env/bin/activate
+   ```
+
+2. Update `pip` and install dependencies:
+   ```bash
+   pip install -U pip
+   pip install -r requirements.txt
+   ```
+
+### Configure Environment Variables
+
+1. Set up the following environment variables in a `.env` file in the project root directory:
+   ```env
+   LIVEKIT_URL=<your_livekit_url>
+   LIVEKIT_API_KEY=<your_livekit_api_key>
+   LIVEKIT_API_SECRET=<your_livekit_api_secret>
+   DEEPGRAM_API_KEY=<your_deepgram_api_key>
+   OPENAI_API_KEY=<your_openai_api_key>
+   ELEVEN_API_KEY=<your_eleven_api_key>
+   GROQ_API_KEY=<your_groq_api_key>
+   ```
+
+2. **Groq API Key**: Obtain this key from your Groq account after signup.
+
+3. **LiveKit Details**: Generate the URL, API key, and secret from your LiveKit dashboard.
+
+4. Extract the remaining keys (DeepGram, OpenAI, Eleven Labs) from the password-protected zip file sent via email.
+
+---
+
+## Running the Solution
+
+### Download Required Files
+
+1. Download all required models and assets:
+   ```bash
+   python3 main.py download-files
+   ```
+
+### Start the Assistant
+
+1. For production:
+   ```bash
+   python3 main.py start
+   ```
+
+2. Once the assistant is running, connect it to the hosted [Livekit Playground](https://agents-playground.livekit.io/) for testing.
+
+Certainly! Adding a **File Structure** section in the README is a great way to help users navigate the repository. Here's how you can include it:
+
+---
+
+## File Structure
+
+The following is an overview of the directory structure and the purpose of each file/folder:
+
+```plaintext
+├── main.py          # Main script to initialize and start the assistant.
+├── initialization.py     # Configuration functions to start the system 
+├── assistant.py # Contains the AssistantFunction class 
+├── video_processing.py    # Contains functions to handle video processing tasks.
+├── groq_open.py           # Contains the Groq_Open_LLM() class.
+├── requirements.txt      # Python dependencies required to run the project.
+├── README.md             # Documentation for the project.
+├── .env (should be created by the user)  # Environment variables (API keys).
+├── images/                # Contains images for the README. file.
+│   ├── pic1.png
+│   ├── pic2.png
+│   └── ...
 ```
-$ python3 -m venv ally_env (for windows user you could use 'python' instead of 'python3')
-$ source ally_env/bin/activate ( for windows user im the cmd use: .\ally_env\Scripts\activate.bat)
-$ pip install -U pip
-$ pip install -r requirements.txt
-```
 
-You need to set up the following environment variables:
+### Key Components
 
-First make a free account on livekit and get your own Livekit url, api key and secret.
+- **`main.py`**: The entry point for running the assistant. Includes functions for initialization and starting the assistant.
+- **`assistant.py`**: AssistantFunction Class wherein additional methods have be added for function calling when a person is there in the frame.
+- **`video_processing.py`**: Manages the processing of frame when the webcam is enabled for vision realated tasks.
+- **`groq_open.py`**: Contains the class for setting up the open source Groq model and structuring of it's responses.
+- **`requirements.txt`**: Lists all Python packages required to set up the project environment.
 
-Make sure you add the following lines by making a .env file within your project:
+---
 
-```
-LIVEKIT_URL=...
-LIVEKIT_API_KEY=...
-LIVEKIT_API_SECRET=...
-DEEPGRAM_API_KEY=...
-OPENAI_API_KEY=...
-ELEVEN_API_KEY=
-```
+## Architecture and Flow
 
-Then, run the assistant:
+### Flow
+ My code defines a real-time assistant that connects to a LiveKit room, initializes necessary components like GPT and Open LLM (Groq), and handles user interactions through messages or video frames. The assistant listens for user input, processes it, and determines the appropriate response. If the input involves vision-based tasks (like detecting a person in the frame), the assistant invokes specific functions (e.g., `image` or `person_in_frame`) to handle the request. These functions, defined using LiveKit's `llm.FunctionContext`, ensure that vision-related user queries are processed accurately and trigger appropriate logic based on the user's message.
 
-```
-$ python3 main.py download-files
-$ python3 main.py start
-or
-$ python3 main.py dev
-```
+ Here when a user asks for clarification `about a person or the user himself (user included here for testing in the livekit playground) accurately and in good detail` then the person_in_frame function gets called and subsquent response is obatined using the groq model.
+  
+ A pictorially understanding of all possible cases is shown in the figure below:
+ ![Alt Text](images/pic2.png)
 
-Finally, you can load the [hosted playground](https://agents-playground.livekit.io/) and connect it.
+## Additional Modifications (Opitional)
 
-And most of all have fun with it :)
+### Chaning the Open Source Model
+ As mentioned eariler I use the **Groq LLaMA 3.2-11B Vision Preview** model for person based detection and decriptions. Using the same grok api we can also choose the more powerful model **Groq LLaMA 3.2-90B Vision Preview**, which use 90B paramter. This can be done by modifiying the `initialization.py` file in the `Initialization` class under the method `setting_open_llm()` from `"llama-3.2-11b-vision-preview"` to `"llama-3.2-90b-vision-preview"`. 
+
+ ![Alt Text](images/pic1.png)
+
+
+---
+## Examples:
+
+### Baseline
+
+As seen in the baseline the `gpt-4o` is not able to describe the person.  
+![Alt Text](images/baseline.png)
+### My Implementation
+![Alt Text](images/my_implementation.png)
+As you can see from the figure above, the open source LLM model (`grok`) is able to describe the person in frame. Another example of an object (smartphone) is shown below whose response is given by the `gpt-40`. This can also be checked form the logs while running this reposistory.
+
+![Alt Text](images/my_implementation2.png)
+---
+
+## Troubleshooting
+
+- **Environment Variables**:
+  - Ensure all API keys are set correctly in the `.env` file. You need to create this file and add in all the keys as shown eariler.
+  - Double-check the password for extracting keys from the zip file.
+
+- **Latency Issues**:
+  - Verify that your GPU is optimized for the person-detection model.
+  - Check network latency for Groq API calls.
+
+- **API Errors**:
+  - Confirm API key validity and ensure your subscription allows necessary API calls.
+
+---
+

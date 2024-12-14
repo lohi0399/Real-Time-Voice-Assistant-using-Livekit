@@ -1,6 +1,5 @@
 from livekit.agents import llm
 from typing import Annotated
-import logging
 
 class AssistantFunction(llm.FunctionContext):
     """This class is used to define functions that will be called by the assistant."""

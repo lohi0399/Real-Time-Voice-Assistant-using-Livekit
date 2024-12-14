@@ -1,7 +1,7 @@
 import asyncio
 from dotenv import load_dotenv
 from livekit import agents, rtc
-from livekit.agents import JobContext, WorkerOptions, cli, tokenize, tts
+from livekit.agents import JobContext, WorkerOptions, cli
 from livekit.agents.llm import (
     ChatContext,
     ChatImage,
@@ -109,7 +109,8 @@ async def entrypoint(ctx: JobContext):
                 print("[LOG] No user message to process")
         except Exception as e:
             print(f"[ERROR] Error in function calls handler: {e}")
-            
+
+
 #------------------------------------------------------START--------------------------------------------------------#
     assistant.start(ctx.room) # Assistant starts listening the room
     await asyncio.sleep(1) # Breathing time for the system
