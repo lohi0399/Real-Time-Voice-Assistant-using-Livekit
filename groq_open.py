@@ -14,22 +14,19 @@ from livekit.agents import llm, utils
 load_dotenv()
 
 def _build_oai_image_content(image: ChatImage, cache_key: Any):
-    print('Here 1')
+
     if isinstance(image.image, str):  # image url
         return {
             "type": "image_url",
             "image_url": {"url": image.image, "detail": "auto"},
         }
     elif isinstance(image.image, rtc.VideoFrame):  # VideoFrame
-        print('Here 2')
+
         if cache_key not in image._cache:
             # inside our internal implementation, we allow to put extra metadata to
             # each ChatImage (avoid to reencode each time we do a chatcompletion request)
-            print('Here 3')
             opts = utils.images.EncodeOptions()
-            print('Here 4')
             if image.inference_width and image.inference_height:
-                print('Here 5')
                 opts.resize_options = utils.images.ResizeOptions(
                     width=image.inference_width,
                     height=image.inference_height,
