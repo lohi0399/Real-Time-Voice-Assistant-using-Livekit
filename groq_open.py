@@ -67,7 +67,7 @@ class Groq_Open_LLM:
             
             model=self.model,
         )
-        print(chat_completion.choices[0].message.content)
+        # print(chat_completion.choices[0].message.content)
         # Extract and return the response
         return chat_completion.choices[0].message.content
             

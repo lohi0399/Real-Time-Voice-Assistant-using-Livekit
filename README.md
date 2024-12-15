@@ -38,16 +38,31 @@ This repository provides a solution to integrate a hybrid image processing syste
 ### Environment Setup
 
 1. Create and activate a virtual environment:
+   
+   For Windows:
+   
+   ```bash
+   python -m venv ally_env
+   source .\ally_env\Scripts\activate.bat (run from the cmd)
+   ```
+
+   For Linux:
+
    ```bash
    python3 -m venv ally_env
    source ally_env/bin/activate
    ```
 
 2. Update `pip` and install dependencies:
+
+   For both Linux and Windows:
+
    ```bash
    pip install -U pip
    pip install -r requirements.txt
    ```
+
+   (Upgrade the pip if neccessary)
 
 ### Configure Environment Variables
 
@@ -61,6 +76,7 @@ This repository provides a solution to integrate a hybrid image processing syste
    ELEVEN_API_KEY=<your_eleven_api_key>
    GROQ_API_KEY=<your_groq_api_key>
    ```
+   (get the credentials for the Livekit informations by creating a free account in Livekit)
 
 2. **Groq API Key**: Obtain this key from your Groq account after signup.
 
@@ -75,6 +91,15 @@ This repository provides a solution to integrate a hybrid image processing syste
 ### Download Required Files
 
 1. Download all required models and assets:
+
+   For Windows:
+
+   ```bash
+   python main.py download-files
+   ```
+
+   For Linux:
+
    ```bash
    python3 main.py download-files
    ```
@@ -82,11 +107,20 @@ This repository provides a solution to integrate a hybrid image processing syste
 ### Start the Assistant
 
 1. For production:
+
+   For Windows:
+   
+   ```bash
+   python main.py start
+   ```
+
+   For Linux:
+
    ```bash
    python3 main.py start
    ```
 
-2. Once the assistant is running, connect it to the hosted [Livekit Playground](https://agents-playground.livekit.io/) for testing.
+2. Once the assistant is running, connect it to the hosted [Livekit Playground](https://agents-playground.livekit.io/) for testing. (make sure you have an account on Livekit)
 
 Certainly! Adding a **File Structure** section in the README is a great way to help users navigate the repository. Here's how you can include it:
 
@@ -138,6 +172,9 @@ The following is an overview of the directory structure and the purpose of each 
 
  ![Alt Text](images/pic1.png)
 
+### Removing Print Statement
+
+   I have kept the print statements which were present as the part of the baseline code, but they can be removed for some improvement in speed.
 
 ---
 ## Examples:
@@ -148,9 +185,22 @@ As seen in the baseline the `gpt-4o` is not able to describe the person.
 ![Alt Text](images/baseline.png)
 ### My Implementation
 ![Alt Text](images/my_implementation.png)
+![Alt Text](images/my_implementation3.png)
 As you can see from the figure above, the open source LLM model (`grok`) is able to describe the person in frame. Another example of an object (smartphone) is shown below whose response is given by the `gpt-40`. This can also be checked form the logs while running this reposistory.
 
 ![Alt Text](images/my_implementation2.png)
+
+---
+
+## Challenges Encountered
+
+- **Limited Availability of Open Source LLMs**:
+  - There were few open-source LLMs that were OpenAI-compatible within the LiveKit framework and also supported vision. I found **LLaVA**, which works within the Ollama framework but needed to be run locally.
+  - I opted for the **Groq Cloud Models**, where the **Groq LLaMA 3.2-11B Vision Preview** and **Groq LLaMA 3.2-90B Vision Preview** were the only available vision options. However, these models were not compatible with the LiveKit framework.
+
+- **Custom Compatibility Solution**:
+  - To address this, I implemented a separate class, `Groq_Open_LLM`, in the file `groq_open.py`. This class was designed to manually structure the output for compatibility with the LiveKit framework.
+
 ---
 
 ## Troubleshooting
