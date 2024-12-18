@@ -9,6 +9,9 @@ from livekit.agents.llm import (
 )
 from initialization import Initialization
 from video_processing import _getVideoFrame
+from groq_open import _build_oai_image_content
+from yolo import base64_to_image, detect_person
+
 
 load_dotenv() # Loading environement variables
 
@@ -32,15 +35,17 @@ async def entrypoint(ctx: JobContext):
 
 #------------------------------------------------------EVENTS HANDLERS------------------------------------------------------#
     
-    async def _answer(text: str, use_image: bool = False, open_llm: bool = False):
+    async def _answer(text: str, use_image: bool = False,open_llm: bool = False):
         """
         Answer the user's message with the given text and optionally the latest
         image captured from the video track.
         """
-        print(f"[LOG] _answer called with text: {text}, use_image: {use_image}, open_llm: {open_llm}")
+        print(f"[LOG] _answer called with text: {text}, use_image: {use_image}, GPT4o --> open_llm: {open_llm}")
         try:
             
+
             if use_image:
+
                 print("[LOG] Getting video frame")
                 content: list[str | ChatImage] = [text]
                 latest_image = await _getVideoFrame(ctx, assistant)
@@ -50,7 +55,11 @@ async def entrypoint(ctx: JobContext):
                     print("[LOG] Adding image to content")
                     content.append(ChatImage(image=latest_image))
 
-                    if open_llm:
+                    base64_image = o_llm.base_64_encode(ChatImage(image=latest_image))
+                    yolo_detect = detect_person(base64_to_image(base64_image))
+                    print("[LOG] Yolov5 Detects Person: ",yolo_detect)
+
+                    if open_llm and yolo_detect:
 
                         print("[LOG] Getting open LLM response")
                         response = o_llm.chat(ChatImage(image=latest_image),text)
@@ -62,7 +71,7 @@ async def entrypoint(ctx: JobContext):
 
             print("[LOG] Adding full message to chat context")
             chat_context.messages.append(ChatMessage(role="user", content=content))  
-            print("[LOG] Getting GPT response")
+            print("[LOG] Getting GPT-4o response")
             stream = gpt.chat(chat_ctx=chat_context)
 
             print("[LOG] Sending response to assistant")
@@ -82,6 +91,7 @@ async def entrypoint(ctx: JobContext):
 
     @assistant.on("function_calls_finished")  # This is trigerred everytime after a function from the assistant class is called. 
     def on_function_calls_finished(called_functions: list[agents.llm.CalledFunction]):
+
         """This event triggers when an assistant's function call completes."""
         print(f"[LOG] Function calls finished. Number of calls: {len(called_functions)}")
     
@@ -109,7 +119,6 @@ async def entrypoint(ctx: JobContext):
                 print("[LOG] No user message to process")
         except Exception as e:
             print(f"[ERROR] Error in function calls handler: {e}")
-
 
 #------------------------------------------------------START--------------------------------------------------------#
     assistant.start(ctx.room) # Assistant starts listening the room

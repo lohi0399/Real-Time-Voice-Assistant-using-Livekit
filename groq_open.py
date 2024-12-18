@@ -44,10 +44,15 @@ class Groq_Open_LLM:
     def __init__(self,client: Groq, model:str="llama-3.2-11b-vision-preview"):
         self.client = client
         self.model = model
+    def base_64_encode(self,image: ChatImage):
+
+        base64_image = _build_oai_image_content(image, id(self))
+
+        return base64_image
 
     def chat(self,image: ChatImage,prompt: str) -> str:
 
-        base64_image = _build_oai_image_content(image, id(self))
+        base64_image = _build_oai_image_content(image, id(self)) 
         # Call the Groq API
         chat_completion = self.client.chat.completions.create(
             messages=[
@@ -70,4 +75,4 @@ class Groq_Open_LLM:
         # print(chat_completion.choices[0].message.content)
         # Extract and return the response
         return chat_completion.choices[0].message.content
-            
+    
