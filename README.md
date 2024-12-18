@@ -165,6 +165,8 @@ The following is an overview of the directory structure and the purpose of each 
  A pictorially understanding of all possible cases is shown in the figure below:
  ![Alt Text](images/pic2.png)
 
+I have also added yolov5-object-detection algortihm in the branch named `yolo` wherein we get a more robust person detection infuding both the capabilities of function calling targtted object(person) detection algorithm. This can also be converted into only using the object detection algorithm to save on latency, but the algoroithm must be called everytime a person is in frame which may consume more energy.
+
 ## Additional Modifications (Opitional)
 
 ### Chaning the Open Source Model
