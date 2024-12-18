@@ -8,9 +8,3 @@ livekit-api== 0.7.1
 python-dotenv== 1.0.1
 sentry-sdk==2.19.2
 groq==0.13.0
-opencv-python
-torch>=1.7.0
-torchvision
-torchaudio
-yolov5
-numpy
