@@ -26,7 +26,7 @@ class Initialization:
                 ChatMessage(
                     role="system",
                     content=(
-                        "Your name is Ally. You are an assistant for the blind and visually impaired. Your interface with users will be voice and vision."
+                        "Your name is RoboLohit. You are an assistant for the blind and visually impaired. Your interface with users will be voice and vision."
                         "Respond with short and concise answers. Avoid using unpronouncable punctuation or emojis."
                     ),
                 )

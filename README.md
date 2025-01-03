@@ -1,4 +1,4 @@
-# Hybrid Image Query Solution for Ally - Lohit Gandham
+# Hybrid Image Query Voice Assistant - Lohit Gandham
 
 ## Overview
 
