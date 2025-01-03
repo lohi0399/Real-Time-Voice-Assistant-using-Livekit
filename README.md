@@ -158,7 +158,8 @@ The following is an overview of the directory structure and the purpose of each 
 ## Architecture and Flow
 
 ### Flow
- My code defines a real-time assistant that connects to a LiveKit room, initializes necessary components like GPT and Open LLM (Groq), and handles user interactions through messages or video frames. The assistant listens for user input, processes it, and determines the appropriate response. If the input involves vision-based tasks (like detecting a person in the frame), the assistant invokes specific functions (e.g., `image` or `person_in_frame`) to handle the request. These functions, defined using LiveKit's `llm.FunctionContext`, ensure that vision-related user queries are processed accurately and trigger appropriate logic based on the user's message.
+ My code defines a real-time assistant that connects to a LiveKit room, initializes necessary components like GPT and Open LLM (Groq), and handles user interactions through messages or video frames. The assistant listens for user input, processes it, and determines the appropriate response. If the input involves vision-based tasks (like detecting a person in the frame), the assistant invokes specific functions (e.g., `image` or `person_in_frame`) to handle the request. These functions, defined using LiveKit's `llm.FunctionContext`, ensure that vision-related user queries are processed accurately and trigger appropriate logic based on the user's message. 
+
 
  Here when a user asks for clarification `about a person or the user himself (user included here for testing in the livekit playground) accurately and in good detail` then the person_in_frame function gets called and subsquent response is obatined using the groq model.
   
@@ -166,6 +167,10 @@ The following is an overview of the directory structure and the purpose of each 
  ![Alt Text](images/pic2.png)
 
 I have also added yolov5-object-detection algortihm in the branch named `yolo` wherein we get a more robust person detection infuding both the capabilities of function calling targtted object(person) detection algorithm. This can also be converted into only using the object detection algorithm to save on latency, but the algoroithm must be called everytime a person is in frame which may consume more energy.
+
+```
+This project currently uses Deepgram for speech-to-text transcription. However, you can replace it with OpenAI's Whisper model for similar functionality. Whisper is open-source and suitable for offline or local processing, making it an excellent alternative for certain use cases.
+```
 
 ## Additional Modifications (Opitional)
 

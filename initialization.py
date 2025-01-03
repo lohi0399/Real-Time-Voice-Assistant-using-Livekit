@@ -59,8 +59,8 @@ class Initialization:
                     use_speaker_boost=True
                 )
                 )
-            elevenlabs_tts = elevenlabs.TTS(voice=custom_voice)
-
+            elevenlabs_tts = elevenlabs.TTS(voice=custom_voice) 
+            
             return elevenlabs_tts
 
     def setting_chat_manager(self) -> rtc.ChatManager:
@@ -71,7 +71,7 @@ class Initialization:
         
         assistant = VoiceAssistant(
             vad=silero.VAD.load(), 
-            stt=deepgram.STT(), 
+            stt=deepgram.STT(), # Whisper can also be used here
             llm=self.setting_gpt(),
             tts=self.setting_tts(), 
             fnc_ctx=AssistantFunction(),
