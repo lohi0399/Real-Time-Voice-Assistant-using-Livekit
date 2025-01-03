@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository provides a solution to integrate a hybrid image processing system for **Ally**, the real-time personalized assistant for the blind and visually impaired. The system dynamically switches between a proprietary model (e.g., GPT-4o) and an open-source model (**Groq LLaMA 3.2-11B Vision Preview**) based on the presence of a person in the image. The Groq model is used to describe images containing people, circumventing proprietary model guardrails, while maintaining high reliability and low latency.
+This repository provides a solution to integrate a hybrid image processing system for **RoboLohit**, the real-time personalized assistant for the blind and visually impaired. The system dynamically switches between a proprietary model (e.g., GPT-4o) and an open-source model (**Groq LLaMA 3.2-11B Vision Preview**) based on the presence of a person in the image. The Groq model is used to describe images containing people, circumventing proprietary model guardrails, while maintaining high reliability and low latency.
 
 ---
 
