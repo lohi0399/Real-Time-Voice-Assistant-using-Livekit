@@ -71,7 +71,7 @@ class Initialization:
         
         assistant = VoiceAssistant(
             vad=silero.VAD.load(), 
-            stt=deepgram.STT(), 
+            stt=deepgram.STT(), # Whisper can be used as well
             llm=self.setting_gpt(),
             tts=self.setting_tts(), 
             fnc_ctx=AssistantFunction(),

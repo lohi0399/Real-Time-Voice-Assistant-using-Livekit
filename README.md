@@ -165,6 +165,10 @@ The following is an overview of the directory structure and the purpose of each 
  A pictorially understanding of all possible cases is shown in the figure below:
  ![Alt Text](images/pic2.png)
 
+ ```
+This project currently uses Deepgram for speech-to-text transcription. However, you can replace it with OpenAI's Whisper model for similar functionality. Whisper is open-source and suitable for offline or local processing, making it an excellent alternative for certain use cases.
+```
+
 ## Additional Modifications (Opitional)
 
 ### Chaning the Open Source Model
